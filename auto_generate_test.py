@@ -13,7 +13,7 @@ import json
 
 
 def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last_end):
-    """该报告针对指定市场指定日期范围内的SP广告进行生成"""
+    """该报告针对电玩猩江苏南通店财务数据进行生成"""
     db_info = {'host': '192.168.5.114', 'user': 'test_deepdata', 'passwd': 'test123!@#', 'port': 3308,
                'db': 'test_dwx_all',
                'charset': 'utf8mb4', 'use_unicode': True, }
@@ -82,7 +82,8 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     channel_2_a4={}
     channel_2_a4 = fun_Wenxin(channel_2_q4_new)
     channel_analysis_process_2.append({"question": channel_2_q4, "answer": channel_2_a4})
-    print(channel_2_a4)
+    if channel_2_a4:
+        print("2.4 data succeed")
 # 调用文心一言生成结论, 成功
 
 
@@ -190,13 +191,14 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     # cost_analysis_process_2.append({"question": cost_2_q3, "answer": cost_2_a3})
 
 #把分析需要的问题和结论加到问题中
-    cost_2_q3_new=cost_2_a2+ cost_2_q3+ cost_1_q3 + "\n 结论："+cost_1_a3 +cost_2_q1 +"\n 结论："+cost_2_a1+ cost_2_q2 + "\n 结论："
-    print(cost_2_q3_new)
+    cost_2_q3_new= cost_2_q3+ cost_1_q3 + "\n 结论："+cost_1_a3 +cost_2_q1 +"\n 结论："+cost_2_a1+ cost_2_q2 + "\n 结论："+cost_2_a2
+    # print(cost_2_q3_new)
     cost_2_a3 = {}
     cost_2_a3 = fun_Wenxin(cost_2_q3_new)
-    print(cost_2_a3)
+    # print(cost_2_a3)
     cost_analysis_process_2.append({"question": cost_2_q3, "answer": cost_2_a3})
-
+    if cost_2_a3:
+        print("3 2.3 data succeed")
 
     cost_answer_2 = {}
     cost_answer_2["analysis_item"] = '2. 分析异常情况原因'
@@ -260,11 +262,13 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     # member_analysis_process.append({"question": member_1_4_q, "answer": member_1_4_a})
 
     member_1_4_q_new = member_1_2_q + "\n 结论：" + member_1_2_a + member_1_3_q + "\n 结论：" + member_1_3_a  + member_1_4_q
-    print(member_1_4_q_new)
+    # print(member_1_4_q_new)
     member_1_4_a = {}
     member_1_4_a = fun_Wenxin(member_1_4_q_new)
-    print(member_1_4_a)
+    # print(member_1_4_a)
     member_analysis_process_1.append({"question": member_1_4_q, "answer": member_1_4_a})
+    if member_1_4_a:
+        print("5 1.4 data succeed")
 
     member_answer_1 = {}
     member_answer_1["analysis_item"] = '1. 会员优化分析'
@@ -333,12 +337,13 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     # hot_machine_analysis_process.append({"question": analysis_2_3_question, "answer": analysis_2_3_answer})
 
     analysis_2_3_question_new = analysis_2_1_question + "\n 结论：" + analysis_2_1_answer + analysis_2_2_question + "\n 结论：" + analysis_2_2_answer  + analysis_2_3_question
-    print(analysis_2_3_question_new)
+    # print(analysis_2_3_question_new)
     analysis_2_3_answer = {}
     analysis_2_3_answer = fun_Wenxin(analysis_2_3_question_new)
-    print(analysis_2_3_answer)
+    # print(analysis_2_3_answer)
     coin_analysis_process_2.append({"question": analysis_2_3_question, "answer": analysis_2_3_answer})
-
+    if analysis_2_3_answer:
+        print("6 2.3 data succeed")
 
     # 2.4 计算第14周的南通店热门彩票机（2.1结论）的出奖率
     analysis_2_4_question = "2.4 计算{}-{}一周，{}热门彩票机的出奖率".format(startdate,endate, BusinessName)
