@@ -3,8 +3,11 @@ import json
 
 #利用文心一言生成结论
 
-API_KEY = "yMGCQEjqPGAyCFWsCJgHUuvf"
-SECRET_KEY = "CDp9vYty7Sijgk1M6X5alsmvgrBBuXxe"
+# TODO 个人账号的文心一言API，有可能会失效，最好换成企业账号，目前调用的是免费的yi_34b_chat
+# TODO 目前调用的是免费的yi_34b_chat，希望性能更好，可以更换
+
+API_KEY = "*"
+SECRET_KEY = "*"
 def fun_Wenxin(question):
     url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/yi_34b_chat?access_token=" + get_access_token()
 

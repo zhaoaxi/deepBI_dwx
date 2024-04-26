@@ -14,13 +14,20 @@ import json
 
 def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last_end):
     """该报告针对电玩猩江苏南通店财务数据进行生成"""
-    db_info = {'host': '192.168.5.114', 'user': 'test_deepdata', 'passwd': 'test123!@#', 'port': 3308,
-               'db': 'test_dwx_all',
-               'charset': 'utf8mb4', 'use_unicode': True, }
+    db_info = {'host': '****',
+               'user': '****',
+               'passwd': '****',
+               'port': 3306,
+               'db': '****',
+               'charset': 'utf8mb4',
+               'use_unicode': True, }
+
 
     dwx = DwxMysqlRagUitl(db_info)
 
     last_answer = {}
+    chat_question=[]
+    #存放主观问题
 
     # 设置标题
     report_name = "电玩猩_" + BusinessName + "体检报告_" + startdate + "_" + endate
@@ -76,15 +83,16 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     channel_2_q4 = "2.4根据1.4和2.3的问题和结论 给出建议如何优化滞销套餐"
     # channel_analysis_process_2.append({"question": channel_2_q4, "answer": channel_2_a4})
 
-
 #调用文心一言生成结论，test
     channel_2_q4_new=channel_2_q4 + channel_1_q4 + channel_1_a4 + channel_2_q3 + channel_2_a3
     channel_2_a4={}
     channel_2_a4 = fun_Wenxin(channel_2_q4_new)
     channel_analysis_process_2.append({"question": channel_2_q4, "answer": channel_2_a4})
     if channel_2_a4:
-        print("2.4 data succeed")
+        print("1 2.4 data succeed")
 # 调用文心一言生成结论, 成功
+
+    chat_question.append(channel_2_q4_new)
 
 
     channel_answer_2 = {}
@@ -103,15 +111,7 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     # 套餐部分完成
     all_report_question.append(channel_question)
 
-    # ---------大模型----
-    # all_report_Analysis = []
-    # Analysis = {}
-    # Analysis = fun_Wenxin(json.dumps("问题将以json格式给出，根据json中的文本信息分析店铺，给出优化建议".format(all_report_question)))
-    # all_report_Analysis.append(Analysis)
-    # print(all_report_Analysis)
-    # print(all_report_question)
 
-    # ---------大模型-----------
 
 
     # 2日营收优化分析
@@ -125,9 +125,27 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     daily_revenue_1_2_a = dwx.analyze_weekly_revenue_anomaly(last_start,last_end,startdate,endate, BusinessName)
     daily_revenue_analysis_process_1.append({"question": daily_revenue_1_2_q, "answer": daily_revenue_1_2_a})
 
+
+# 2 1.3 主观问题
+    daily_revenue_1_3_q = "1.3 根据1.1和1.2的结论分析可能的营收异常原因，给出优化建议 "
+    # daily_revenue_1_3_a = dwx.analyze_weekly_revenue_anomaly(last_start,last_end,startdate,endate, BusinessName)
+    daily_revenue_1_3_q_new=daily_revenue_1_3_q +  daily_revenue_1_1_q + "\n 结论："+ daily_revenue_1_1_a + daily_revenue_1_2_q +"\n 结论："+ daily_revenue_1_2_a
+    daily_revenue_1_3_a={}
+    daily_revenue_1_3_a = fun_Wenxin(daily_revenue_1_3_q_new)
+
+    # print(daily_revenue_1_3_q_new )
+    if daily_revenue_1_3_a:
+        print("2 1.3 data succeed")
+
+    daily_revenue_analysis_process_1.append({"question": daily_revenue_1_3_q, "answer": daily_revenue_1_3_a})
+
+    chat_question.append(daily_revenue_1_3_q_new)
+
+
+
     daily_revenue_answer_1 = {}
     daily_revenue_answer_1["analysis_item"] = '1. 日营收优化分析'
-    daily_revenue_answer_1["description"] = '两个子问题'
+    daily_revenue_answer_1["description"] = '三个子问题'
     daily_revenue_answer_1["analysis_process"] = daily_revenue_analysis_process_1
 
     daily_revenue_answer=[]
@@ -186,7 +204,7 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     cost_analysis_process_2.append({"question": cost_2_q2, "answer": cost_2_a2})
 
     # 2.3 给出成本异常原因  （主观问题）
-    cost_2_q3 = "2.3 根据1.3，2.1和2.2的结论，分析成本异常原因"
+    cost_2_q3 = "2.3 根据1.3，2.1和2.2的结论，分析可能的成本异常原因"
     # cost_2_a3 = "成本异常可能由于供应链问题、人工成本增加或者营销策略调整等原因引起。"
     # cost_analysis_process_2.append({"question": cost_2_q3, "answer": cost_2_a3})
 
@@ -199,6 +217,9 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     cost_analysis_process_2.append({"question": cost_2_q3, "answer": cost_2_a3})
     if cost_2_a3:
         print("3 2.3 data succeed")
+
+    chat_question.append(cost_2_q3_new)
+
 
     cost_answer_2 = {}
     cost_answer_2["analysis_item"] = '2. 分析异常情况原因'
@@ -227,9 +248,25 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     game_coins_1_2_a = dwx.analyze_daily_coin_sales(startdate,endate, BusinessName)
     game_coins_analysis_process_1.append({"question": game_coins_1_2_q, "answer": game_coins_1_2_a})
 
+    # 4 1.3 主观问题
+    game_coins_1_3_q = "1.3 根据1.1和1.2结论，分析这周游戏币波动是否存在异常 ，给出优化建议 "
+
+    game_coins_1_3_q_new = game_coins_1_3_q + game_coins_1_1_q + "\n 结论：" + game_coins_1_1_a + game_coins_1_2_q + "\n 结论：" + game_coins_1_2_a
+    game_coins_1_3_a = {}
+    game_coins_1_3_a = fun_Wenxin(game_coins_1_3_q_new)
+
+    # print(game_coins_1_3_q_new)
+    if game_coins_1_3_a:
+        print("4 1.3 data succeed")
+
+    game_coins_analysis_process_1.append({"question": game_coins_1_3_q, "answer": game_coins_1_3_a})
+
+    chat_question.append(game_coins_1_3_q_new)
+
+
     game_coins_answer_1 = {}
     game_coins_answer_1["analysis_item"] = '1. 分析游戏币波动是否有异常'
-    game_coins_answer_1["description"] = '两个子问题'
+    game_coins_answer_1["description"] = '三个子问题'
     game_coins_answer_1["analysis_process"] = game_coins_analysis_process_1
 
     game_coins_answer = []
@@ -257,7 +294,7 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     member_analysis_process_1.append({"question": member_1_3_q, "answer": member_1_3_a})
 
 # 5 1.4 (主观问题)
-    member_1_4_q = "1.4.根据1.2和1.3问题结论，对比分析各类会员占比与总会员占比（第3问结论）给出优化建议".format(startdate,endate, BusinessName)
+    member_1_4_q = "1.4.根据1.2和1.3问题结论，对比分析各类会员占比与总会员占比（第3问结论），给出优化建议".format(startdate,endate, BusinessName)
     # member_1_4_a = dwx.analyze_RFM(startdate, endate)
     # member_analysis_process.append({"question": member_1_4_q, "answer": member_1_4_a})
 
@@ -269,6 +306,9 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     member_analysis_process_1.append({"question": member_1_4_q, "answer": member_1_4_a})
     if member_1_4_a:
         print("5 1.4 data succeed")
+
+    chat_question.append(member_1_4_q_new)
+
 
     member_answer_1 = {}
     member_answer_1["analysis_item"] = '1. 会员优化分析'
@@ -303,7 +343,6 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     analysis_1_3_question = "1.3 分析{}-{}一周，{}的各类机器机台启动次数占比".format(startdate,endate, BusinessName)
     analysis_1_3_answer = dwx.calculate_startup_proportion(startdate,endate, BusinessName)
     coin_analysis_process_1.append({"question": analysis_1_3_question, "answer": analysis_1_3_answer})
-
 
 
     coin_answer_1 = {}
@@ -345,6 +384,8 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     if analysis_2_3_answer:
         print("6 2.3 data succeed")
 
+    chat_question.append(analysis_2_3_question_new )
+
     # 2.4 计算第14周的南通店热门彩票机（2.1结论）的出奖率
     analysis_2_4_question = "2.4 计算{}-{}一周，{}热门彩票机的出奖率".format(startdate,endate, BusinessName)
     analysis_2_4_answer = dwx.calculate_lottery_win_rate(startdate,endate, BusinessName)
@@ -372,7 +413,7 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     # 7机台异常分析
     machine_issue_analysis_process_1 = []
 
-    machine_issue_1_1_q = "1.1 分析{}周南通店各类机器的投币产出异常".format(startdate,endate, BusinessName)
+    machine_issue_1_1_q = "1.1 分析{}周南通店各类机器的投币产出异常(即投币为0但产出不为0)".format(startdate,endate, BusinessName)
     machine_issue_1_1_a = dwx.analyze_machine_coin_output_issue(startdate,endate, BusinessName)
     machine_issue_analysis_process_1.append({"question": machine_issue_1_1_q, "answer": machine_issue_1_1_a})
 
@@ -384,9 +425,26 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     machine_issue_1_3_a = dwx.analyze_machine_fault_issue(startdate,endate, BusinessName)
     machine_issue_analysis_process_1.append({"question": machine_issue_1_3_q, "answer": machine_issue_1_3_a})
 
+    machine_issue_1_4_q = "1.4 根据1.1 1.2 和1.3的结论，分析机台异常情况，给出优化建议"
+    # machine_issue_1_4_a = dwx.analyze_machine_fault_issue(startdate,endate, BusinessName)
+
+    machine_issue_1_4_q_new = machine_issue_1_4_q + machine_issue_1_1_q + "\n 结论：" + machine_issue_1_1_a + machine_issue_1_2_q + "\n 结论：" + machine_issue_1_2_a+ machine_issue_1_3_q+ "\n 结论："+machine_issue_1_3_a
+    machine_issue_1_4_a = {}
+    machine_issue_1_4_a = fun_Wenxin(machine_issue_1_4_q_new)
+
+    # print(machine_issue_1_4_q_new)
+    if machine_issue_1_4_a:
+        print("7 1.4 data succeed")
+
+
+    machine_issue_analysis_process_1.append({"question": machine_issue_1_4_q, "answer": machine_issue_1_4_a})
+
+    chat_question.append(machine_issue_1_4_q_new )
+
+
     machine_issue_answer_1 = {}
     machine_issue_answer_1["analysis_item"] = '1. 机台异常分析'
-    machine_issue_answer_1["description"] = '三个子问题'
+    machine_issue_answer_1["description"] = '四个子问题'
     machine_issue_answer_1["analysis_process"] = machine_issue_analysis_process_1
 
 #按道理不加也行，但是不加会渲染不出结果，，，，，
@@ -405,8 +463,21 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
 #-------------------------以上是子问题分析---------------------
 
 
-
-
+    # TODO 增加 优化策略模块——总结几个模块的主观问题，调用gpt
+    # chat_question.append(("请根据以上问题和结论，分点给出对应电玩猩{}，在{}-{}这一周的优化建议").format(BusinessName,startdate,endate))
+    # chat_answer={}
+    #
+    # print(chat_question)
+    #
+    # chat_answer=fun_Wenxin(chat_question)
+    # print(chat_answer)
+    #
+    # if chat_answer:
+    #     print("Analysis succeed")
+    #
+    # REPORT_ANALYST["analysis_item"] = chat_question
+    # REPORT_ANALYST["analysis_item"] = chat_answer
+# -------------------------以上是chat生成优化策略---------------------
 
 
     """执行上述构建"""
@@ -415,6 +486,9 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     last_answer["report_thought"]=REPORT_THOUGHT
     # 增加report_analyst
     last_answer["report_analyst"] = REPORT_ANALYST
+
+    # last_answer["report_analyst"].append(chat_answer)
+
 
 
     print(last_answer)
